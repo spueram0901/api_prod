@@ -2,40 +2,30 @@ package ies.alcores.api_prod.controller;
 
 import ies.alcores.api_prod.model.Producto;
 import ies.alcores.api_prod.service.ProductoService;
-import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
-@AllArgsConstructor
 @RequestMapping("/api/productos")
 public class ProductoController {
 
+    @Autowired
     private ProductoService productoService;
 
-    @GetMapping
-    private ResponseEntity<List<Producto>> listar(){
+    @GetMapping("")
+    public ResponseEntity<List<Producto>> findAll(){
         return ResponseEntity.ok(this.productoService.findAll());
     }
 
-    @GetMapping("/{codBarras}")
-    private ResponseEntity<Producto> obtenerPorCodBarras(@PathVariable final String codBarras){
-        return this.productoService.findByCodigoBarras(codBarras)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @PostMapping("/add")
-    private ResponseEntity<Producto> craete(@Valid @RequestBody Producto producto){
-        return ResponseEntity.ok(this.productoService.save((producto)));
-    }
-
-    @DeleteMapping("/delete/{codBarras}")
-    private ResponseEntity<Void> delete(@PathVariable final String codBarras){
-        this.productoService.delete(codBarras);
-        return ResponseEntity.noContent().build();
+    @GetMapping("categoria/{nombreCat}")
+    public ResponseEntity<List<Producto>>
+    findByCategoria(@PathVariable String nombreCat){
+        return ResponseEntity.ok(this.productoService.findByCategoria(nombreCat));
     }
 }
